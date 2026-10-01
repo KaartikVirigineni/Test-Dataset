@@ -1,0 +1,39 @@
+{
+    "name": "crm/customer-management",
+    "description": "CRM Customer Management System with REST API",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "yiisoft/yii2": "~2.0.49",
+        "yiisoft/yii2-httpclient": "~2.0.0",
+        "firebase/php-jwt": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": ""
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "yii\\composer\\Installer::postInstall"
+        ],
+        "post-update-cmd": [
+            "yii\\composer\\Installer::postUpdate"
+        ]
+    },
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777"
+                }
+            ]
+        }
+    }
+}

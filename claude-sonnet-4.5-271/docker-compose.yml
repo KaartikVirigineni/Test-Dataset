@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: trip_planner_app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///app/data/trips.db
+      - JWT_SECRET=my-super-secret-jwt-key-change-in-production
+      - RUST_LOG=info
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - trip_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  trip_data:

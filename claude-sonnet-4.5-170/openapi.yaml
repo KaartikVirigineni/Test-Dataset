@@ -1,0 +1,466 @@
+openapi: 3.0.3
+info:
+  title: ReserveIt API
+  description: Table and Appointment Reservation System API with JWT authentication and RBAC
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Local development server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - name
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+          format: password
+          minLength: 6
+    
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+    
+    CreateReservationRequest:
+      type: object
+      required:
+        - tableId
+        - reservationDate
+        - durationMinutes
+        - partySize
+      properties:
+        tableId:
+          type: integer
+        reservationDate:
+          type: string
+          format: date-time
+        durationMinutes:
+          type: integer
+          minimum: 15
+          maximum: 480
+        partySize:
+          type: integer
+          minimum: 1
+          maximum: 20
+        specialRequests:
+          type: string
+          nullable: true
+    
+    UpdateReservationRequest:
+      type: object
+      properties:
+        reservationDate:
+          type: string
+          format: date-time
+          nullable: true
+        durationMinutes:
+          type: integer
+          nullable: true
+        partySize:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        specialRequests:
+          type: string
+          nullable: true
+    
+    ReservationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userName:
+          type: string
+        tableId:
+          type: integer
+        tableNumber:
+          type: string
+        reservationDate:
+          type: string
+          format: date-time
+        durationMinutes:
+          type: integer
+        partySize:
+          type: integer
+        status:
+          type: string
+        specialRequests:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    
+    Table:
+      type: object
+      properties:
+        id:
+          type: integer
+        tableNumber:
+          type: string
+        capacity:
+          type: integer
+        location:
+          type: string
+        isAvailable:
+          type: boolean
+    
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+paths:
+  /auth/login:
+    post:
+      summary: User login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /auth/register:
+    post:
+      summary: User registration
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /tables:
+    get:
+      summary: Get all tables
+      tags:
+        - Tables
+      responses:
+        '200':
+          description: List of tables
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+    
+    post:
+      summary: Create a new table
+      tags:
+        - Tables
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Table'
+      responses:
+        '201':
+          description: Table created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+  
+  /tables/{id}:
+    get:
+      summary: Get table by ID
+      tags:
+        - Tables
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Table details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '404':
+          description: Table not found
+    
+    put:
+      summary: Update table
+      tags:
+        - Tables
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Table'
+      responses:
+        '200':
+          description: Table updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+        '404':
+          description: Table not found
+    
+    delete:
+      summary: Delete table
+      tags:
+        - Tables
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Table deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+        '404':
+          description: Table not found
+  
+  /reservations:
+    get:
+      summary: Get all reservations (Admin only)
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of all reservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+    
+    post:
+      summary: Create a new reservation
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationRequest'
+      responses:
+        '201':
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+        '400':
+          description: Bad request - Table unavailable or booking conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+  
+  /reservations/my:
+    get:
+      summary: Get current user's reservations
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of user's reservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationResponse'
+        '401':
+          description: Unauthorized
+  
+  /reservations/{id}:
+    get:
+      summary: Get reservation by ID
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Reservation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Not your reservation
+        '404':
+          description: Reservation not found
+    
+    put:
+      summary: Update reservation
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReservationRequest'
+      responses:
+        '200':
+          description: Reservation updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Not your reservation
+        '404':
+          description: Reservation not found
+    
+    delete:
+      summary: Delete reservation
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Reservation deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Not your reservation
+        '404':
+          description: Reservation not found

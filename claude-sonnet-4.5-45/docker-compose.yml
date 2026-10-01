@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    volumes:
+      - ./writable:/var/www/html/writable
+      - ./database:/var/www/html/database
+    environment:
+      - CI_ENVIRONMENT=production
+      - JWT_SECRET=your-secret-key-change-in-production
+    command: php spark serve --host=0.0.0.0 --port=8080
+    restart: unless-stopped

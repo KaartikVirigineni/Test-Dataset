@@ -1,0 +1,47 @@
+@page "/"
+
+<PageTitle>RealtimeChat</PageTitle>
+
+<h1>Welcome to RealtimeChat</h1>
+
+<p>This is a production-ready real-time chat and messaging application built with Blazor Server.</p>
+
+<h2>Features</h2>
+<ul>
+    <li>JWT-based authentication</li>
+    <li>Role-based access control (RBAC)</li>
+    <li>REST API for all operations</li>
+    <li>SQLite database</li>
+    <li>Swagger/OpenAPI documentation</li>
+</ul>
+
+<h2>REST API Endpoints</h2>
+<p>Visit <a href="/swagger-ui" target="_blank">Swagger UI</a> for interactive API documentation.</p>
+
+<h3>Authentication</h3>
+<ul>
+    <li><strong>POST</strong> /api/auth/login - Login with username and password</li>
+    <li><strong>POST</strong> /api/auth/register - Register a new user</li>
+</ul>
+
+<h3>Rooms</h3>
+<ul>
+    <li><strong>GET</strong> /api/rooms - Get all chat rooms</li>
+    <li><strong>GET</strong> /api/rooms/{id} - Get room details</li>
+    <li><strong>POST</strong> /api/rooms - Create a new room</li>
+    <li><strong>POST</strong> /api/rooms/{id}/join - Join a room</li>
+    <li><strong>POST</strong> /api/rooms/{id}/leave - Leave a room</li>
+</ul>
+
+<h3>Messages</h3>
+<ul>
+    <li><strong>GET</strong> /api/rooms/{roomId}/messages - Get messages in a room</li>
+    <li><strong>POST</strong> /api/rooms/{roomId}/messages - Send a message</li>
+</ul>
+
+<h2>Default Users</h2>
+<p>The application comes with two default users:</p>
+<ul>
+    <li><strong>Admin:</strong> username: <code>admin</code>, password: <code>admin123</code></li>
+    <li><strong>User:</strong> username: <code>user</code>, password: <code>user123</code></li>
+</ul>

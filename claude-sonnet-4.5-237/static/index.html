@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Presence API</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        .get { background: #61affe; color: white; }
+        .post { background: #49cc90; color: white; }
+        .put { background: #fca130; color: white; }
+        .delete { background: #f93e3e; color: white; }
+        .path {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            font-size: 1em;
+        }
+        .description {
+            color: #666;
+            margin-top: 8px;
+            font-size: 0.95em;
+        }
+        .link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .link:hover {
+            background: #5568d3;
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .tech-badge {
+            background: #e9ecef;
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🟢 Realtime Presence API</h1>
+        <p class="subtitle">Production-ready REST API for managing realtime user presence and session tracking</p>
+        
+        <div class="section">
+            <h2>Technology Stack</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">Actix Web (Rust)</span>
+                <span class="tech-badge">SQLite</span>
+                <span class="tech-badge">JWT Authentication</span>
+                <span class="tech-badge">RBAC</span>
+                <span class="tech-badge">Docker</span>
+                <span class="tech-badge">OpenAPI 3.0</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>API Documentation</h2>
+            <a href="/swagger" class="link">📄 View OpenAPI Specification</a>
+        </div>
+
+        <div class="section">
+            <h2>Key Endpoints</h2>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/auth/register</span>
+                <div class="description">Register a new user account</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/auth/login</span>
+                <div class="description">Login and receive JWT token</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/sessions</span>
+                <div class="description">List all active presence sessions (authenticated)</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/sessions</span>
+                <div class="description">Create a new presence session (authenticated)</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="path">/api/sessions/{id}</span>
+                <div class="description">Update session status (online/away/offline)</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="path">/api/sessions/{id}</span>
+                <div class="description">Delete a presence session</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/users</span>
+                <div class="description">List all users (admin only)</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/health</span>
+                <div class="description">Health check endpoint</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Features</h2>
+            <ul style="color: #666; line-height: 1.8; margin-left: 20px;">
+                <li>JWT-based authentication</li>
+                <li>Role-based access control (Admin/User)</li>
+                <li>Realtime presence tracking (online/away/offline)</li>
+                <li>Session metadata support</li>
+                <li>SQLite persistent storage</li>
+                <li>Production-ready with Docker</li>
+                <li>Complete OpenAPI 3.0 documentation</li>
+                <li>CORS enabled</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+node_modules
+.meteor/local
+*.db
+*.sqlite
+.git
+.gitignore
+README.md
+.DS_Store

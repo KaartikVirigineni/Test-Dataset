@@ -1,0 +1,284 @@
+openapi: 3.0.0
+info:
+  title: SecureStore API
+  description: File storage and upload service with JWT authentication and RBAC
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /:
+    get:
+      summary: Root endpoint
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  version:
+                    type: string
+  /swagger:
+    get:
+      summary: Get OpenAPI specification
+      responses:
+        '200':
+          description: OpenAPI YAML specification
+          content:
+            application/yaml:
+              schema:
+                type: string
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      parameters:
+        - in: query
+          name: username
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: password
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  user_id:
+                    type: integer
+                  role:
+                    type: string
+        '400':
+          description: Username already exists
+  /api/auth/login:
+    post:
+      summary: Login user
+      parameters:
+        - in: query
+          name: username
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: password
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  user_id:
+                    type: integer
+                  role:
+                    type: string
+        '401':
+          description: Invalid credentials
+  /api/files/upload:
+    post:
+      summary: Upload a file
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  filename:
+                    type: string
+                  size:
+                    type: integer
+                  content_type:
+                    type: string
+                  uploaded_at:
+                    type: string
+        '401':
+          description: Unauthorized
+  /api/files:
+    get:
+      summary: List files
+      description: Users see their own files, admins see all files
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    filename:
+                      type: string
+                    size:
+                      type: integer
+                    content_type:
+                      type: string
+                    uploaded_at:
+                      type: string
+                    user_id:
+                      type: integer
+        '401':
+          description: Unauthorized
+  /api/files/{file_id}:
+    get:
+      summary: Download a file
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: file_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: File content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Permission denied
+        '404':
+          description: File not found
+    delete:
+      summary: Delete a file
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: file_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: File deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Permission denied
+        '404':
+          description: File not found
+  /api/users:
+    get:
+      summary: List all users (admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    username:
+                      type: string
+                    email:
+                      type: string
+                    role:
+                      type: string
+                    created_at:
+                      type: string
+        '403':
+          description: Admin access required
+  /api/users/{user_id}/role:
+    put:
+      summary: Update user role (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: role
+          required: true
+          schema:
+            type: string
+            enum: [user, admin]
+      responses:
+        '200':
+          description: Role updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user_id:
+                    type: integer
+                  new_role:
+                    type: string
+        '400':
+          description: Invalid role
+        '403':
+          description: Admin access required
+        '404':
+          description: User not found
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

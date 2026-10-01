@@ -1,0 +1,15 @@
+CI_ENVIRONMENT = production
+
+app.baseURL = 'http://localhost:8000'
+app.indexPage = ''
+
+database.default.hostname = localhost
+database.default.database = writable/database.db
+database.default.username = root
+database.default.password = 
+database.default.DBDriver = SQLite3
+database.default.DBPrefix =
+database.default.port = 3306
+
+JWT_SECRET = your-secret-key-change-in-production-2024
+JWT_EXPIRATION = 3600

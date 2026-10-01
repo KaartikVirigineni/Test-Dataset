@@ -1,0 +1,355 @@
+openapi: 3.0.0
+info:
+  title: ReserveTable API
+  description: REST API for table and appointment reservations
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        created_at:
+          type: integer
+    
+    Reservation:
+      type: object
+      required:
+        - table_number
+        - guest_name
+        - guest_email
+        - guest_phone
+        - reservation_date
+        - reservation_time
+        - party_size
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        table_number:
+          type: integer
+          minimum: 1
+          maximum: 100
+        guest_name:
+          type: string
+        guest_email:
+          type: string
+          format: email
+        guest_phone:
+          type: string
+        reservation_date:
+          type: string
+          example: "2024-12-25"
+        reservation_time:
+          type: string
+          example: "19:00"
+        party_size:
+          type: integer
+          minimum: 1
+          maximum: 20
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled, completed]
+          default: pending
+        notes:
+          type: string
+        created_at:
+          type: integer
+          readOnly: true
+        updated_at:
+          type: integer
+          readOnly: true
+    
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+        errors:
+          type: object
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      token:
+                        type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      summary: Login user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      token:
+                        type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /reservations:
+    get:
+      summary: List all reservations for authenticated user
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, confirmed, cancelled, completed]
+          description: Filter by status
+      responses:
+        '200':
+          description: List of reservations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reservation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      summary: Create a new reservation
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '201':
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+
+  /reservations/{id}:
+    get:
+      summary: Get a reservation by ID
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Reservation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Reservation'
+        '404':
+          description: Reservation not found
+        '401':
+          description: Unauthorized
+    
+    put:
+      summary: Update a reservation
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '200':
+          description: Reservation updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Bad request
+        '404':
+          description: Reservation not found
+        '401':
+          description: Unauthorized
+    
+    delete:
+      summary: Delete a reservation
+      tags:
+        - Reservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Reservation deleted
+        '404':
+          description: Reservation not found
+        '401':
+          description: Unauthorized
+
+  /swagger:
+    get:
+      summary: Get OpenAPI specification
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: OpenAPI YAML specification
+          content:
+            application/yaml:
+              schema:
+                type: string
+
+  /swagger-ui:
+    get:
+      summary: Swagger UI interface
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: Swagger UI HTML page
+          content:
+            text/html:
+              schema:
+                type: string

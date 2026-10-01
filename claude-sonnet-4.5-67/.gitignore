@@ -1,0 +1,7 @@
+/vendor/
+/runtime/logs/
+/runtime/cache/
+/data/*.db
+.env
+composer.phar
+.DS_Store

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "4567:4567"
+    environment:
+      - DATABASE_PATH=/app/data/rentatrack.db
+      - RACK_ENV=production
+      - JWT_SECRET=production_secret_change_me
+    volumes:
+      - rental_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4567/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  rental_data:

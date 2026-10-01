@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+define('SPARKED', true);
+
+define('ROOTPATH', __DIR__ . DIRECTORY_SEPARATOR);
+define('FCPATH', ROOTPATH . 'public' . DIRECTORY_SEPARATOR);
+
+require ROOTPATH . 'vendor/autoload.php';
+
+$app = Config\Services::codeigniter();
+$app->initialize();
+$app->setContext('php-cli');
+
+$console = new CodeIgniter\CLI\Console();
+exit($console->run());

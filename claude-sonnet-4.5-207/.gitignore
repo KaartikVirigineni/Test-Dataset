@@ -1,0 +1,7 @@
+*.db
+data/
+tmp/
+log/
+.env
+.bundle/
+vendor/bundle/

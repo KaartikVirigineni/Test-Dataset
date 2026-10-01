@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.DS_Store
+tmp/*
+logs/*
+data/*.sqlite
+vendor/
+composer.lock
+README.md
+docker-compose.yml
+Dockerfile
+.dockerignore

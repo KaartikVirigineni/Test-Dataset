@@ -1,0 +1,358 @@
+openapi: 3.0.3
+info:
+  title: ClinicBook API
+  description: Clinic and salon booking system REST API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Development server
+security:
+  - BearerAuth: []
+paths:
+  /health:
+    get:
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+  /swagger:
+    get:
+      summary: Get OpenAPI specification
+      security: []
+      responses:
+        '200':
+          description: OpenAPI spec in YAML format
+          content:
+            application/yaml:
+              schema:
+                type: string
+  /swagger-ui:
+    get:
+      summary: Swagger UI interface
+      security: []
+      responses:
+        '200':
+          description: HTML page with Swagger UI
+  /api/auth/register:
+    post:
+      summary: Register new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - name
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                role:
+                  type: string
+                  enum: [admin, provider, client]
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Missing required fields
+        '409':
+          description: Username already exists
+  /api/auth/login:
+    post:
+      summary: Login user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+        '401':
+          description: Invalid credentials
+  /api/auth/me:
+    get:
+      summary: Get current user
+      responses:
+        '200':
+          description: User details
+        '401':
+          description: Unauthorized
+  /api/users:
+    get:
+      summary: List all users (admin only)
+      responses:
+        '200':
+          description: List of users
+        '403':
+          description: Forbidden
+  /api/users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User details
+        '404':
+          description: User not found
+    put:
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User updated
+        '403':
+          description: Forbidden
+    delete:
+      summary: Delete user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted
+        '403':
+          description: Forbidden
+  /api/services:
+    get:
+      summary: List all services
+      security: []
+      responses:
+        '200':
+          description: List of services
+    post:
+      summary: Create service (admin/provider only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - duration
+                - price
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                duration:
+                  type: integer
+                price:
+                  type: number
+                provider_id:
+                  type: integer
+      responses:
+        '201':
+          description: Service created
+        '403':
+          description: Forbidden
+  /api/services/{id}:
+    get:
+      summary: Get service by ID
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Service details
+        '404':
+          description: Service not found
+    put:
+      summary: Update service (admin/provider only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                duration:
+                  type: integer
+                price:
+                  type: number
+                provider_id:
+                  type: integer
+      responses:
+        '200':
+          description: Service updated
+        '403':
+          description: Forbidden
+    delete:
+      summary: Delete service (admin/provider only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Service deleted
+        '403':
+          description: Forbidden
+  /api/appointments:
+    get:
+      summary: List appointments (filtered by role)
+      responses:
+        '200':
+          description: List of appointments
+    post:
+      summary: Create appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - service_id
+                - appointment_date
+              properties:
+                service_id:
+                  type: integer
+                appointment_date:
+                  type: string
+                  format: date-time
+                notes:
+                  type: string
+                client_id:
+                  type: integer
+      responses:
+        '201':
+          description: Appointment created
+        '404':
+          description: Service not found
+  /api/appointments/{id}:
+    get:
+      summary: Get appointment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Appointment details
+        '403':
+          description: Forbidden
+        '404':
+          description: Appointment not found
+    put:
+      summary: Update appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, confirmed, cancelled, completed]
+                notes:
+                  type: string
+                appointment_date:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Appointment updated
+        '403':
+          description: Forbidden
+    delete:
+      summary: Delete appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Appointment deleted
+        '403':
+          description: Forbidden
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,25 @@
+{
+  "name": "ecommercehub-api",
+  "version": "1.0.0",
+  "description": "E-commerce store REST API with Koa",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "koa": "^2.14.2",
+    "koa-router": "^12.0.0",
+    "koa-bodyparser": "^4.4.1",
+    "koa-static": "^5.0.0",
+    "koa-mount": "^4.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "better-sqlite3": "^9.2.2",
+    "js-yaml": "^4.1.0",
+    "swagger-ui-dist": "^5.10.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

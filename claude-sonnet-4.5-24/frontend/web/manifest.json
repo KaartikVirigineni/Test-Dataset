@@ -1,0 +1,12 @@
+{
+    "name": "FormFlow Survey Builder",
+    "short_name": "FormFlow",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "Survey and form builder application",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": []
+}

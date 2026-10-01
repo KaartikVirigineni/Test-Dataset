@@ -1,0 +1,14 @@
+/vendor/
+/writable/cache/*
+/writable/logs/*
+/writable/session/*
+/writable/uploads/*
+/writable/debugbar/*
+/writable/database.db
+/database/*.db
+.env
+.phpunit.result.cache
+.DS_Store
+Thumbs.db
+composer.phar
+*.log

@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  title: Webhook Relay API
+  description: A production-ready webhook relay and catcher service with authentication
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Local development server
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Webhooks
+    description: Webhook management and retrieval
+  - name: Endpoints
+    description: Webhook endpoint management
+  - name: Catch
+    description: Public webhook catching endpoint
+  - name: Health
+    description: Health check endpoint
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check if the API is running
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: password123
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: Bearer
+        '422':
+          description: Validation error
+
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: Bearer
+        '422':
+          description: Invalid credentials
+
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Logged out successfully
+
+  /user:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /endpoints:
+    get:
+      tags:
+        - Endpoints
+      summary: Get all endpoints for current user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of endpoints
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Endpoint'
+    post:
+      tags:
+        - Endpoints
+      summary: Create a new endpoint
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: My Webhook Endpoint
+                description:
+                  type: string
+                  example: Endpoint for receiving GitHub webhooks
+      responses:
+        '201':
+          description: Endpoint created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  endpoint:
+                    $ref: '#/components/schemas/Endpoint'
+                  url:
+                    type: string
+                    example: http://localhost:8000/api/catch/abc123def456
+
+  /endpoints/{id}:
+    delete:
+      tags:
+        - Endpoints
+      summary: Delete an endpoint and all its webhooks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Endpoint deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Endpoint and all associated webhooks deleted successfully
+
+  /webhooks:
+    get:
+      tags:
+        - Webhooks
+      summary: Get all webhooks for current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: endpoint_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by endpoint ID
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 15
+          description: Number of items per page
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+      responses:
+        '200':
+          description: Paginated list of webhooks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Webhook'
+                  current_page:
+                    type: integer
+                  per_page:
+                    type: integer
+                  total:
+                    type: integer
+
+  /webhooks/{id}:
+    get:
+      tags:
+        - Webhooks
+      summary: Get a specific webhook
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Webhook details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '404':
+          description: Webhook not found
+    delete:
+      tags:
+        - Webhooks
+      summary: Delete a webhook
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Webhook deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Webhook deleted successfully
+
+  /catch/{endpoint_id}:
+    post:
+      tags:
+        - Catch
+      summary: Catch a webhook (POST)
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique endpoint identifier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Webhook received
+                  webhook_id:
+                    type: integer
+        '404':
+          description: Endpoint not found
+    get:
+      tags:
+        - Catch
+      summary: Catch a webhook (GET)
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Webhook received
+    put:
+      tags:
+        - Catch
+      summary: Catch a webhook (PUT)
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook received
+    patch:
+      tags:
+        - Catch
+      summary: Catch a webhook (PATCH)
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook received
+    delete:
+      tags:
+        - Catch
+      summary: Catch a webhook (DELETE)
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Webhook received
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Endpoint:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: My Webhook Endpoint
+        endpoint_id:
+          type: string
+          example: abc123def456
+        description:
+          type: string
+          example: Endpoint for receiving GitHub webhooks
+        webhooks_count:
+          type: integer
+          example: 42
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        endpoint_id:
+          type: integer
+          example: 1
+        method:
+          type: string
+          example: POST
+        headers:
+          type: object
+          additionalProperties: true
+        body:
+          type: object
+          additionalProperties: true
+        query_params:
+          type: object
+          additionalProperties: true
+        ip_address:
+          type: string
+          example: 192.168.1.1
+        endpoint:
+          $ref: '#/components/schemas/Endpoint'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

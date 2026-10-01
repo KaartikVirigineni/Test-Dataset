@@ -1,0 +1,9 @@
+/vendor/
+/runtime/*
+!/runtime/.gitkeep
+/database/*.db
+/web/assets/*
+!/web/assets/.gitkeep
+.env
+composer.phar
+.DS_Store

@@ -1,0 +1,44 @@
+@page "/"
+
+<PageTitle>Map - GeoMapper</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>Interactive Map</h1>
+            <p>View and explore map locations. Use the REST API to add, update, or delete locations.</p>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <div id="map" style="height: 600px; width: 100%;"></div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <h3>Quick Start</h3>
+            <ol>
+                <li>Register a user: <code>POST /api/auth/register</code></li>
+                <li>Login to get a JWT token: <code>POST /api/auth/login</code></li>
+                <li>Create locations: <code>POST /api/locations</code> with Authorization header</li>
+                <li>View all locations: <code>GET /api/locations</code></li>
+            </ol>
+            <p>
+                <a href="/swagger-ui" class="btn btn-primary">View API Documentation</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeMap");
+        }
+    }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+}

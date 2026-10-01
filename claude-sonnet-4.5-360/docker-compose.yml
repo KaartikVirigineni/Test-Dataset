@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pos-master
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///app/data/pos.db
+      - JWT_SECRET=super_secret_key_change_in_production
+      - RUST_LOG=info
+    volumes:
+      - pos_data:/app/data
+    command: /app/pos-master
+
+volumes:
+  pos_data:

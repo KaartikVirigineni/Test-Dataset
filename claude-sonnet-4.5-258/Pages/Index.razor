@@ -1,0 +1,27 @@
+@page "/"
+
+<PageTitle>ExperimentHub</PageTitle>
+
+<h1>ExperimentHub</h1>
+
+<p>Welcome to ExperimentHub - A/B Testing & Experiments Management Platform</p>
+
+<h2>API Documentation</h2>
+<p>
+    <a href="/swagger-ui" target="_blank">View Swagger UI</a>
+</p>
+
+<h2>REST API Endpoints</h2>
+<ul>
+    <li><strong>POST /api/auth/register</strong> - Register a new user</li>
+    <li><strong>POST /api/auth/login</strong> - Login and receive JWT token</li>
+    <li><strong>GET /api/experiments</strong> - List all experiments (requires auth)</li>
+    <li><strong>GET /api/experiments/{id}</strong> - Get experiment by ID (requires auth)</li>
+    <li><strong>POST /api/experiments</strong> - Create new experiment (requires auth)</li>
+    <li><strong>PUT /api/experiments/{id}</strong> - Update experiment (requires auth)</li>
+    <li><strong>DELETE /api/experiments/{id}</strong> - Delete experiment (requires auth)</li>
+    <li><strong>POST /api/experiments/{id}/variants</strong> - Add variant to experiment (requires auth)</li>
+    <li><strong>POST /api/experiments/{id}/results</strong> - Record experiment result (requires auth)</li>
+    <li><strong>GET /api/experiments/{id}/stats</strong> - Get experiment statistics (requires auth)</li>
+    <li><strong>GET /swagger</strong> - OpenAPI specification</li>
+</ul>

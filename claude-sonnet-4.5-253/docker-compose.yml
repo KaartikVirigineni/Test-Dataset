@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/database.sqlite
+    volumes:
+      - ./database:/var/www/html/database
+      - ./storage:/var/www/html/storage
+    command: >
+      sh -c "php artisan key:generate --force &&
+             php artisan migrate --force &&
+             /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3

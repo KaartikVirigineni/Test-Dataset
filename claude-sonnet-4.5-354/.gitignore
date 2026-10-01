@@ -1,0 +1,5 @@
+node_modules/
+.meteor/local
+*.db
+*.sqlite
+.DS_Store

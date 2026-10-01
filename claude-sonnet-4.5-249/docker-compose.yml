@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./runtime:/app/runtime
+      - ./database:/app/database
+    environment:
+      - YII_DEBUG=0
+      - YII_ENV=prod
+    command: php -S 0.0.0.0:8000 -t web

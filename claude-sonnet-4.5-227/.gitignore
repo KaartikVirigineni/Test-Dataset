@@ -1,0 +1,8 @@
+*.db
+*.db-journal
+*.log
+tmp/
+log/
+.env
+.bundle/
+vendor/bundle

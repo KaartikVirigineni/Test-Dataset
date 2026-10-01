@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///app/data/streamlite.db
+      - JWT_SECRET=super-secret-key-change-in-production
+      - RUST_LOG=info
+    volumes:
+      - app-data:/app/data
+    command: /app/streamlite
+
+volumes:
+  app-data:

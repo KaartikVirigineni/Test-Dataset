@@ -1,0 +1,44 @@
+{
+    "name": "app/realtime-presence",
+    "description": "Realtime Presence Demo with Yii2",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "yiisoft/yii2": "~2.0.45",
+        "yiisoft/yii2-swiftmailer": "~2.1.0",
+        "firebase/php-jwt": "^6.4"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": ""
+        }
+    },
+    "config": {
+        "process-timeout": 1800,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "yii\\composer\\Installer::postInstall"
+        ],
+        "post-create-project-cmd": [
+            "yii\\composer\\Installer::postCreateProject"
+        ]
+    },
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777"
+                }
+            ]
+        }
+    }
+}

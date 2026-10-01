@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: budgettracker-app
+    ports:
+      - "8000:8000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/budget.db
+      - Jwt__Secret=your-secret-key-min-32-characters-long-for-production-use-change-this
+    volumes:
+      - budget-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  budget-data:

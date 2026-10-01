@@ -1,0 +1,11 @@
+/vendor/
+/runtime/logs/*
+/runtime/cache/*
+!/runtime/.gitkeep
+/database/*.db
+/database/*.db-shm
+/database/*.db-wal
+.env
+.DS_Store
+composer.phar
+*.log

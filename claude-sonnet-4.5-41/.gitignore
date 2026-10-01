@@ -1,0 +1,7 @@
+/vendor/
+/data/*.sqlite
+/tmp/*
+/logs/*
+composer.lock
+.env
+.DS_Store

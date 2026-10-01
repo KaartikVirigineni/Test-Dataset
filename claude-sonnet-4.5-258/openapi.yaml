@@ -1,0 +1,416 @@
+openapi: 3.0.3
+info:
+  title: ExperimentHub API
+  description: A/B Testing & Experiments Management API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  userId:
+                    type: integer
+        '400':
+          description: Bad request
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login and receive JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Unauthorized
+  /api/experiments:
+    get:
+      tags:
+        - Experiments
+      summary: List all experiments for the authenticated user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of experiments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experiment'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Experiments
+      summary: Create a new experiment
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                hypothesis:
+                  type: string
+      responses:
+        '201':
+          description: Experiment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experiment'
+        '401':
+          description: Unauthorized
+  /api/experiments/{id}:
+    get:
+      tags:
+        - Experiments
+      summary: Get experiment by ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Experiment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experiment'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+    put:
+      tags:
+        - Experiments
+      summary: Update experiment
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+                  enum: [draft, running, completed, paused]
+      responses:
+        '200':
+          description: Experiment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experiment'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+    delete:
+      tags:
+        - Experiments
+      summary: Delete experiment
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Experiment deleted
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /api/experiments/{id}/variants:
+    post:
+      tags:
+        - Experiments
+      summary: Add a variant to an experiment
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - trafficPercentage
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                trafficPercentage:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+      responses:
+        '200':
+          description: Variant added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variant'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /api/experiments/{id}/results:
+    post:
+      tags:
+        - Experiments
+      summary: Record an experiment result
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - variantId
+                - converted
+              properties:
+                variantId:
+                  type: integer
+                converted:
+                  type: boolean
+      responses:
+        '200':
+          description: Result recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /api/experiments/{id}/stats:
+    get:
+      tags:
+        - Experiments
+      summary: Get experiment statistics
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Experiment statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExperimentStats'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /swagger:
+    get:
+      tags:
+        - Documentation
+      summary: Get OpenAPI specification
+      responses:
+        '200':
+          description: OpenAPI YAML specification
+          content:
+            application/yaml:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Experiment:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        hypothesis:
+          type: string
+        status:
+          type: string
+          enum: [draft, running, completed, paused]
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variant'
+    Variant:
+      type: object
+      properties:
+        id:
+          type: integer
+        experimentId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        trafficPercentage:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    Result:
+      type: object
+      properties:
+        id:
+          type: integer
+        experimentId:
+          type: integer
+        variantId:
+          type: integer
+        converted:
+          type: boolean
+        recordedAt:
+          type: string
+          format: date-time
+    ExperimentStats:
+      type: object
+      properties:
+        experimentId:
+          type: integer
+        experimentName:
+          type: string
+        variantStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantStats'
+    VariantStats:
+      type: object
+      properties:
+        variantId:
+          type: integer
+        variantName:
+          type: string
+        totalViews:
+          type: integer
+        totalConversions:
+          type: integer
+        conversionRate:
+          type: number
+          format: double

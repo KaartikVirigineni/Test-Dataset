@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "6543:6543"
+    environment:
+      - DATABASE_URL=sqlite:///gists.db
+      - JWT_SECRET=change-this-secret-in-production
+    volumes:
+      - ./data:/app/data
+    command: python server.py

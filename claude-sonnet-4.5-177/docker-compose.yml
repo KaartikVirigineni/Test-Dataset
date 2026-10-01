@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    environment:
+      - JWT_SECRET=your-secret-key-change-in-production-please
+      - DB_PATH=/var/www/html/data/microblog.db
+    volumes:
+      - ./data:/var/www/html/data
+    restart: unless-stopped

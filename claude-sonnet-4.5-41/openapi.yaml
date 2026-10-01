@@ -1,0 +1,495 @@
+openapi: 3.0.3
+info:
+  title: Feature Flags API
+  description: REST API for managing feature flags and remote configuration
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  service:
+                    type: string
+                    example: feature-flags
+                  timestamp:
+                    type: integer
+                    example: 1234567890
+  /swagger:
+    get:
+      summary: Get OpenAPI specification
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: OpenAPI YAML specification
+          content:
+            application/yaml:
+              schema:
+                type: string
+  /swagger-ui:
+    get:
+      summary: Swagger UI interface
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: HTML page with Swagger UI
+          content:
+            text/html:
+              schema:
+                type: string
+  /api/auth/login:
+    post:
+      summary: Authenticate user and get token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin123
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: abc123def456
+                  username:
+                    type: string
+                    example: admin
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/flags:
+    get:
+      summary: List all feature flags
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of flags
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  flags:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Flag'
+                  count:
+                    type: integer
+                    example: 3
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new feature flag
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - flag_key
+                - name
+                - enabled
+              properties:
+                flag_key:
+                  type: string
+                  example: dark_mode
+                name:
+                  type: string
+                  example: Dark Mode
+                description:
+                  type: string
+                  example: Enable dark mode UI
+                enabled:
+                  type: boolean
+                  example: false
+                config_value:
+                  type: string
+                  nullable: true
+                  example: '{"theme": "dark"}'
+      responses:
+        '201':
+          description: Flag created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Flag created successfully
+                  flag:
+                    $ref: '#/components/schemas/Flag'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/flags/{id}:
+    get:
+      summary: Get a specific flag by ID
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Flag details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  flag:
+                    $ref: '#/components/schemas/Flag'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Flag not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update a feature flag
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Dark Mode Updated
+                description:
+                  type: string
+                  example: Updated description
+                enabled:
+                  type: boolean
+                  example: true
+                config_value:
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: Flag updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Flag updated successfully
+                  flag:
+                    $ref: '#/components/schemas/Flag'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Partially update a feature flag
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Flag updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Flag updated successfully
+                  flag:
+                    $ref: '#/components/schemas/Flag'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a feature flag
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Flag deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Flag deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Flag not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/flags/{id}/toggle:
+    post:
+      summary: Toggle a feature flag on/off
+      tags:
+        - Flags
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Flag toggled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Flag toggled successfully
+                  flag:
+                    $ref: '#/components/schemas/Flag'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Flag not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/config/{key}:
+    get:
+      summary: Get flag configuration by key
+      tags:
+        - Configuration
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            example: new_ui
+      responses:
+        '200':
+          description: Flag configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    example: new_ui
+                  enabled:
+                    type: boolean
+                    example: true
+                  value:
+                    type: string
+                    nullable: true
+                    example: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Flag not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+  schemas:
+    Flag:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        flag_key:
+          type: string
+          example: new_ui
+        name:
+          type: string
+          example: New UI Feature
+        description:
+          type: string
+          nullable: true
+          example: Enable the new user interface
+        enabled:
+          type: boolean
+          example: true
+        config_value:
+          type: string
+          nullable: true
+          example: null
+        created:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00+00:00'
+        modified:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00+00:00'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Error message
+        errors:
+          type: object
+          additionalProperties: true

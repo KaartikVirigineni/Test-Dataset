@@ -1,0 +1,9 @@
+/vendor/
+/runtime/logs/*
+/runtime/cache/*
+/db/*.db
+.env
+.idea
+.vscode
+*.log
+composer.phar

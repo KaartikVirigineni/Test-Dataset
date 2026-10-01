@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: portfolio-tracker
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///app/data/portfolio.db
+      - JWT_SECRET=super-secret-jwt-key-change-in-production
+      - RUST_LOG=info
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - portfolio-data:/app/data
+    command: ./portfolio-tracker
+
+volumes:
+  portfolio-data:

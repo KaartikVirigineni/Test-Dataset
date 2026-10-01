@@ -1,0 +1,11 @@
+.git
+.env
+vendor
+writable/cache/*
+writable/logs/*
+writable/session/*
+writable/uploads/*
+!writable/.htaccess
+node_modules
+*.md
+.gitignore

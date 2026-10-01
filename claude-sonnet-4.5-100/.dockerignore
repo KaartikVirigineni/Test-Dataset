@@ -1,0 +1,11 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/.toolstarget
+**/*.db
+**/*.db-shm
+**/*.db-wal

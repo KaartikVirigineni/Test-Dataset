@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/geomapper.db
+      - Jwt__Key=ThisIsASecretKeyForJwtTokenGeneration123456
+      - Jwt__Issuer=GeoMapper
+      - Jwt__Audience=GeoMapperUsers
+    volumes:
+      - app-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  app-data:

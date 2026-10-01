@@ -1,0 +1,11 @@
+pyramid==2.0.2
+waitress==2.1.2
+pyramid-tm==2.5
+SQLAlchemy==2.0.23
+pyramid-jwt==1.6.1
+PyJWT==2.8.0
+passlib==1.7.4
+bcrypt==4.1.2
+marshmallow==3.20.1
+pyramid-openapi3==0.17.0
+pyramid-cors==2.0.2

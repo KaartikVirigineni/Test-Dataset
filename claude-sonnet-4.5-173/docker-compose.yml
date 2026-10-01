@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/eventflow.db
+      - JwtSettings__Secret=EventFlowSecretKey123456789012345678901234567890
+      - JwtSettings__Issuer=EventFlow
+      - JwtSettings__Audience=EventFlowUsers
+      - JwtSettings__ExpirationMinutes=60
+    volumes:
+      - eventflow-data:/app/data
+    command: ["dotnet", "EventFlow.dll"]
+
+volumes:
+  eventflow-data:

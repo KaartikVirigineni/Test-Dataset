@@ -1,0 +1,51 @@
+@page "/resources"
+
+<PageTitle>Resources</PageTitle>
+
+<h1>Developer Resources</h1>
+
+<p>This page displays developer resources. Use the REST API or GraphQL endpoint to manage resources programmatically.</p>
+
+<h3>API Usage Example</h3>
+
+<pre><code>
+# Login
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@devportal.com","password":"Admin123!"}'
+
+# Get Resources (replace YOUR_TOKEN)
+curl -X GET http://localhost:8080/api/resources \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Create Resource
+curl -X POST http://localhost:8080/api/resources \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Sample API","description":"A sample REST API","url":"https://api.example.com","category":"API"}'
+</code></pre>
+
+<h3>GraphQL Example</h3>
+
+<pre><code>
+query {
+  resources {
+    id
+    title
+    description
+    category
+    url
+  }
+}
+
+mutation {
+  createResource(
+    title: "GraphQL Guide"
+    description: "Complete GraphQL tutorial"
+    category: "Documentation"
+  ) {
+    id
+    title
+  }
+}
+</code></pre>

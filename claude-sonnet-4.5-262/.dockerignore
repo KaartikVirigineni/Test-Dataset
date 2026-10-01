@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+vendor
+runtime/*
+!runtime/.gitkeep
+db/*.db
+node_modules
+*.md
+.DS_Store
+Thumbs.db

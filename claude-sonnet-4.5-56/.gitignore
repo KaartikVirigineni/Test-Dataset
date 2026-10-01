@@ -1,0 +1,14 @@
+/vendor/
+/writable/cache/*
+/writable/logs/*
+/writable/session/*
+/writable/uploads/*
+/writable/*.db
+!/writable/.htaccess
+.env
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

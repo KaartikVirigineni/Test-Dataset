@@ -1,0 +1,6 @@
+{
+  "jwtSecret": "change-this-secret-in-production-environment",
+  "db": {
+    "path": "./data/classifieds.db"
+  }
+}

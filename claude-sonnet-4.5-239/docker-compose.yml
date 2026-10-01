@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/chat.db
+      - Jwt__Key=SuperSecretKeyForRealtimeChat123456789
+      - Jwt__Issuer=RealtimeChat
+      - Jwt__Audience=RealtimeChatUsers
+    volumes:
+      - chat-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  chat-data:

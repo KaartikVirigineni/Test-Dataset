@@ -1,0 +1,51 @@
+@page "/"
+
+<PageTitle>ExpenseTracker</PageTitle>
+
+<h1>ExpenseTracker</h1>
+
+<p>Welcome to the Expense Tracker application.</p>
+
+<h2>API Documentation</h2>
+
+<p>Access the REST API documentation at:</p>
+<ul>
+    <li><a href="/swagger-ui" target="_blank">Swagger UI</a></li>
+    <li><a href="/swagger" target="_blank">OpenAPI Spec (YAML)</a></li>
+</ul>
+
+<h2>Quick Start</h2>
+
+<h3>1. Register a User</h3>
+<pre><code>POST /api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testpass"
+}</code></pre>
+
+<h3>2. Login</h3>
+<pre><code>POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testpass"
+}</code></pre>
+
+<h3>3. Create an Expense</h3>
+<pre><code>POST /api/expenses
+Authorization: Bearer &lt;your-token&gt;
+Content-Type: application/json
+
+{
+  "description": "Grocery shopping",
+  "amount": 85.50,
+  "date": "2024-01-15T10:00:00Z",
+  "category": "Food"
+}</code></pre>
+
+<h3>4. Get All Expenses</h3>
+<pre><code>GET /api/expenses
+Authorization: Bearer &lt;your-token&gt;</code></pre>

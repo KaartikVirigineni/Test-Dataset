@@ -1,0 +1,25 @@
+{
+  "name": "clinicbook",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "meteor run --port 3000",
+    "docker": "node main.js"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.20.13",
+    "meteor-node-stubs": "^1.2.5",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "better-sqlite3": "^9.2.2",
+    "js-yaml": "^4.1.0"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    }
+  }
+}

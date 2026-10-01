@@ -1,0 +1,254 @@
+openapi: 3.0.1
+info:
+  title: GeoMapper API
+  description: Maps / GIS viewer REST API
+  version: v1
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request
+        '409':
+          description: Username already exists
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login and get JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request
+        '401':
+          description: Invalid credentials
+  /api/locations:
+    get:
+      tags:
+        - Locations
+      summary: Get all locations
+      responses:
+        '200':
+          description: List of all locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MapLocationResponse'
+    post:
+      tags:
+        - Locations
+      summary: Create a new location
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapLocationRequest'
+      responses:
+        '201':
+          description: Location created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapLocationResponse'
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized
+  /api/locations/my:
+    get:
+      tags:
+        - Locations
+      summary: Get current user's locations
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: List of user's locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MapLocationResponse'
+        '401':
+          description: Unauthorized
+  /api/locations/{id}:
+    get:
+      tags:
+        - Locations
+      summary: Get location by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Location details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapLocationResponse'
+        '404':
+          description: Location not found
+    put:
+      tags:
+        - Locations
+      summary: Update a location
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapLocationRequest'
+      responses:
+        '200':
+          description: Location updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapLocationResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Location not found or unauthorized
+    delete:
+      tags:
+        - Locations
+      summary: Delete a location
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Location deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Location not found or unauthorized
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+    MapLocationRequest:
+      type: object
+      required:
+        - name
+        - latitude
+        - longitude
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        category:
+          type: string
+    MapLocationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        category:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        username:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///app/data/campaigns.db
+      - JWT_SECRET=super-secret-key-change-in-production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - RUST_LOG=info
+    volumes:
+      - campaign-data:/app/data
+    command: ./campaign-manager
+
+volumes:
+  campaign-data:

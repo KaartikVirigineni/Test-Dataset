@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+define('SPARKS', __DIR__ . '/vendor/codeigniter4/framework/spark');
+
+if (is_file(SPARKS)) {
+    require_once SPARKS;
+} else {
+    echo "Unable to find spark file.\n";
+    exit(1);
+}

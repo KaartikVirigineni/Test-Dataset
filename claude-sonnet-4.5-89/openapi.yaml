@@ -1,0 +1,367 @@
+openapi: 3.0.0
+info:
+  title: API Gateway Admin
+  description: Production-ready API gateway and admin platform with JWT authentication
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        created_at:
+          type: integer
+
+    ApiRoute:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        path:
+          type: string
+        method:
+          type: string
+          enum: [GET, POST, PUT, DELETE, PATCH]
+        target_url:
+          type: string
+        enabled:
+          type: boolean
+        rate_limit:
+          type: integer
+        created_at:
+          type: integer
+
+    RequestLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        route_id:
+          type: integer
+        user_id:
+          type: integer
+        method:
+          type: string
+        path:
+          type: string
+        status_code:
+          type: integer
+        response_time:
+          type: integer
+        created_at:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/register:
+    post:
+      summary: Register new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+
+  /api/routes:
+    get:
+      summary: List all API routes
+      tags:
+        - API Routes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of routes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiRoute'
+
+    post:
+      summary: Create new API route
+      tags:
+        - API Routes
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - path
+                - method
+                - target_url
+              properties:
+                name:
+                  type: string
+                path:
+                  type: string
+                method:
+                  type: string
+                target_url:
+                  type: string
+                enabled:
+                  type: boolean
+                rate_limit:
+                  type: integer
+      responses:
+        '200':
+          description: Route created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRoute'
+        '403':
+          description: Admin access required
+
+  /api/routes/{id}:
+    put:
+      summary: Update API route
+      tags:
+        - API Routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                path:
+                  type: string
+                method:
+                  type: string
+                target_url:
+                  type: string
+                enabled:
+                  type: boolean
+                rate_limit:
+                  type: integer
+      responses:
+        '200':
+          description: Route updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRoute'
+
+    delete:
+      summary: Delete API route
+      tags:
+        - API Routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Route deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /api/users:
+    get:
+      summary: List all users (admin only)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /api/logs:
+    get:
+      summary: Get request logs (admin only)
+      tags:
+        - Logs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RequestLog'
+
+  /graphql:
+    post:
+      summary: GraphQL endpoint
+      tags:
+        - GraphQL
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                variables:
+                  type: object
+      responses:
+        '200':
+          description: GraphQL response
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /swagger:
+    get:
+      summary: OpenAPI specification
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: OpenAPI YAML spec
+          content:
+            application/x-yaml:
+              schema:
+                type: string
+
+  /docs:
+    get:
+      summary: Swagger UI documentation
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: Swagger UI HTML page
+          content:
+            text/html:
+              schema:
+                type: string

@@ -1,0 +1,83 @@
+@page "/"
+
+<PageTitle>EventFlow - Home</PageTitle>
+
+<div class="container">
+    <h1>Welcome to EventFlow</h1>
+    <p>Event Management & Ticketing Platform</p>
+    
+    <div class="api-info">
+        <h2>REST API Documentation</h2>
+        <p>Access the API documentation at:</p>
+        <ul>
+            <li><a href="/swagger-ui" target="_blank">Swagger UI</a></li>
+            <li><a href="/swagger" target="_blank">OpenAPI Spec (YAML)</a></li>
+        </ul>
+        
+        <h3>API Endpoints</h3>
+        <ul>
+            <li><strong>POST</strong> /api/auth/register - Register a new user</li>
+            <li><strong>POST</strong> /api/auth/login - Login and get JWT token</li>
+            <li><strong>GET</strong> /api/events - Get all events</li>
+            <li><strong>GET</strong> /api/events/{id} - Get event by ID</li>
+            <li><strong>POST</strong> /api/events - Create new event (requires auth)</li>
+            <li><strong>PUT</strong> /api/events/{id} - Update event (requires auth)</li>
+            <li><strong>DELETE</strong> /api/events/{id} - Delete event (requires auth)</li>
+            <li><strong>GET</strong> /api/tickets/me - Get user's tickets (requires auth)</li>
+            <li><strong>POST</strong> /api/tickets/purchase - Purchase a ticket (requires auth)</li>
+            <li><strong>POST</strong> /api/tickets/{id}/cancel - Cancel a ticket (requires auth)</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .api-info {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+    
+    h2 {
+        color: #555;
+        margin-bottom: 1rem;
+    }
+    
+    h3 {
+        color: #666;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    ul {
+        line-height: 1.8;
+    }
+    
+    a {
+        color: #0066cc;
+        text-decoration: none;
+    }
+    
+    a:hover {
+        text-decoration: underline;
+    }
+    
+    strong {
+        color: #c7254e;
+        background-color: #f9f2f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+    }
+</style>

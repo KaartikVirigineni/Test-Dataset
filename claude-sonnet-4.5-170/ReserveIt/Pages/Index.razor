@@ -1,0 +1,37 @@
+@page "/"
+
+<PageTitle>ReserveIt - Home</PageTitle>
+
+<h1>Welcome to ReserveIt</h1>
+
+<p>Table and Appointment Reservation System</p>
+
+<h2>API Documentation</h2>
+<p>
+    Visit <a href="/swagger-ui" target="_blank">Swagger UI</a> to explore the API endpoints.
+</p>
+
+<h2>Default Credentials</h2>
+<div style="margin-top: 20px;">
+    <h3>Admin User</h3>
+    <ul>
+        <li><strong>Email:</strong> admin@reserveit.com</li>
+        <li><strong>Password:</strong> admin123</li>
+    </ul>
+
+    <h3>Regular User</h3>
+    <ul>
+        <li><strong>Email:</strong> user@reserveit.com</li>
+        <li><strong>Password:</strong> user123</li>
+    </ul>
+</div>
+
+<h2>API Endpoints</h2>
+<ul>
+    <li>POST /api/auth/login - User login</li>
+    <li>POST /api/auth/register - User registration</li>
+    <li>GET /api/tables - Get all tables</li>
+    <li>POST /api/reservations - Create reservation (requires auth)</li>
+    <li>GET /api/reservations/my - Get my reservations (requires auth)</li>
+    <li>GET /api/reservations - Get all reservations (admin only)</li>
+</ul>

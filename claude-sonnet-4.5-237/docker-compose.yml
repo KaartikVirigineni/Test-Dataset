@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - RUST_LOG=info
+      - DATABASE_URL=sqlite:///app/data/presence.db
+      - JWT_SECRET=change-this-secret-in-production-please-use-a-long-random-string
+    volumes:
+      - app-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  app-data:

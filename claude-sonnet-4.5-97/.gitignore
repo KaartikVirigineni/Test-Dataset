@@ -1,0 +1,5 @@
+node_modules
+.meteor/local
+alerthub.db
+*.log
+data/

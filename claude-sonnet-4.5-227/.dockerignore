@@ -1,0 +1,9 @@
+.git
+.gitignore
+README.md
+*.db
+tmp/
+log/
+.env
+.bundle/
+vendor/bundle

@@ -1,0 +1,10 @@
+/vendor/
+/writable/cache/*
+/writable/logs/*
+/writable/session/*
+/writable/uploads/*
+!/writable/.htaccess
+/database/*.db
+.env
+.DS_Store
+composer.lock

@@ -1,0 +1,61 @@
+@page "/"
+
+<PageTitle>DevPortal - Home</PageTitle>
+
+<h1>Welcome to DevPortal</h1>
+
+<div class="info-section">
+    <h2>Getting Started</h2>
+    <p>DevPortal is a developer-focused platform for managing projects and API keys with role-based access control.</p>
+    
+    <h3>Default Credentials</h3>
+    <ul>
+        <li><strong>Admin:</strong> admin@devportal.com / Admin123!</li>
+        <li><strong>Developer:</strong> dev@devportal.com / Dev123!</li>
+    </ul>
+
+    <h3>API Endpoints</h3>
+    <ul>
+        <li><code>POST /api/auth/login</code> - Authenticate user</li>
+        <li><code>POST /api/auth/register</code> - Register new user</li>
+        <li><code>GET /api/projects</code> - List user projects</li>
+        <li><code>POST /api/projects</code> - Create project</li>
+        <li><code>GET /api/projects/{'{id}'}</code> - Get project details</li>
+        <li><code>DELETE /api/projects/{'{id}'}</code> - Delete project</li>
+        <li><code>GET /api/projects/{'{projectId}'}/apikeys</code> - List project API keys</li>
+        <li><code>POST /api/projects/{'{projectId}'}/apikeys</code> - Create API key</li>
+        <li><code>DELETE /api/projects/{'{projectId}'}/apikeys/{'{id}'}</code> - Revoke API key</li>
+    </ul>
+
+    <h3>Documentation</h3>
+    <p>
+        <a href="/swagger-ui" target="_blank">View Swagger UI</a> |
+        <a href="/swagger" target="_blank">Download OpenAPI Spec</a>
+    </p>
+</div>
+
+<style>
+    .info-section {
+        max-width: 800px;
+    }
+    
+    .info-section h2 {
+        margin-top: 2rem;
+        color: #0366d6;
+    }
+    
+    .info-section h3 {
+        margin-top: 1.5rem;
+    }
+    
+    .info-section code {
+        background-color: #f6f8fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: monospace;
+    }
+    
+    .info-section ul {
+        line-height: 1.8;
+    }
+</style>

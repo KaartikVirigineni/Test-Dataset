@@ -1,0 +1,46 @@
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Welcome to BudgetTracker</h1>
+
+<p>This is a personal finance and budgeting application with REST API.</p>
+
+<h2>Getting Started</h2>
+
+<ul>
+    <li><a href="/swagger-ui" target="_blank">View API Documentation (Swagger UI)</a></li>
+    <li>Default Admin: admin@budget.com / admin123</li>
+    <li>Default User: user@budget.com / user123</li>
+</ul>
+
+<h2>API Endpoints</h2>
+
+<h3>Authentication</h3>
+<ul>
+    <li>POST /api/auth/login - Login</li>
+    <li>POST /api/auth/register - Register</li>
+</ul>
+
+<h3>Budgets (Requires Authentication)</h3>
+<ul>
+    <li>GET /api/budgets - Get all budgets</li>
+    <li>GET /api/budgets/{id} - Get budget by ID</li>
+    <li>POST /api/budgets - Create budget</li>
+    <li>PUT /api/budgets/{id} - Update budget</li>
+    <li>DELETE /api/budgets/{id} - Delete budget</li>
+</ul>
+
+<h3>Transactions (Requires Authentication)</h3>
+<ul>
+    <li>GET /api/transactions - Get all transactions</li>
+    <li>GET /api/transactions/{id} - Get transaction by ID</li>
+    <li>POST /api/transactions - Create transaction</li>
+    <li>PUT /api/transactions/{id} - Update transaction</li>
+    <li>DELETE /api/transactions/{id} - Delete transaction</li>
+</ul>
+
+<h3>Categories (Requires Authentication)</h3>
+<ul>
+    <li>GET /api/categories - Get all categories</li>
+</ul>

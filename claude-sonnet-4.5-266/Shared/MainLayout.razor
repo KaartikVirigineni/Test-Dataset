@@ -1,0 +1,31 @@
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <div class="top-row">
+            <h3>LeadScore Pro</h3>
+        </div>
+        <nav class="flex-column">
+            <div class="nav-item">
+                <a class="nav-link" href="/">
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" href="/swagger-ui" target="_blank">
+                    API Documentation
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <main>
+        <div class="top-bar">
+            <h1>Lead Capture & Scoring System</h1>
+        </div>
+
+        <article class="content">
+            @Body
+        </article>
+    </main>
+</div>

@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+runtime/*
+!runtime/.gitkeep
+vendor
+tests
+README.md
+docker-compose.yml
+Dockerfile
+.dockerignore

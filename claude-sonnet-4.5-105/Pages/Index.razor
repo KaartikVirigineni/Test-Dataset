@@ -1,0 +1,41 @@
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Welcome to DevPortal</h1>
+
+<p>
+    This is a production-ready developer portal built with Blazor Server, featuring:
+</p>
+
+<ul>
+    <li>JWT-based authentication</li>
+    <li>RESTful API with Swagger documentation</li>
+    <li>GraphQL API endpoint</li>
+    <li>SQLite database</li>
+    <li>Dockerized deployment</li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<h3>REST API</h3>
+<p>Visit <a href="/swagger-ui">/swagger-ui</a> to explore the REST API endpoints.</p>
+
+<h3>GraphQL</h3>
+<p>Visit <a href="/graphql">/graphql</a> to access the GraphQL playground.</p>
+
+<h3>Authentication</h3>
+<p>
+    <strong>Default Admin Credentials:</strong><br />
+    Email: admin@devportal.com<br />
+    Password: Admin123!
+</p>
+
+<h3>API Endpoints</h3>
+<ul>
+    <li><code>POST /api/auth/register</code> - Register a new user</li>
+    <li><code>POST /api/auth/login</code> - Login and get JWT token</li>
+    <li><code>GET /api/resources</code> - Get all resources (requires auth)</li>
+    <li><code>POST /api/resources</code> - Create a resource (requires auth)</li>
+    <li><code>GET /swagger</code> - Get OpenAPI specification</li>
+</ul>

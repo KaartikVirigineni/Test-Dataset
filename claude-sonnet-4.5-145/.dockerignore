@@ -1,0 +1,13 @@
+.git
+.gitignore
+README.md
+.env
+writable/cache/*
+writable/logs/*
+writable/session/*
+writable/uploads/*
+vendor
+composer.phar
+*.md
+.DS_Store
+Thumbs.db

@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:6543"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - JWT_SECRET=your-secret-key-change-in-production
+      - DATABASE_URL=sqlite:///data/nps.db
+    command: waitress-serve --host=0.0.0.0 --port=6543 --call app:main

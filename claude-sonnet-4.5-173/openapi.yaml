@@ -1,0 +1,456 @@
+openapi: 3.0.1
+info:
+  title: EventFlow API
+  description: Event Management & Ticketing REST API with JWT authentication
+  version: '1.0'
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+        '400':
+          description: Bad request - user already exists or invalid data
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login and get JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Unauthorized - invalid credentials
+  /api/events:
+    get:
+      tags:
+        - Events
+      summary: Get all events
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+    post:
+      tags:
+        - Events
+      summary: Create a new event
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '201':
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Bad request - invalid data
+        '401':
+          description: Unauthorized
+  /api/events/{id}:
+    get:
+      tags:
+        - Events
+      summary: Get event by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+    put:
+      tags:
+        - Events
+      summary: Update an event
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '200':
+          description: Event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found or unauthorized
+        '401':
+          description: Unauthorized
+    delete:
+      tags:
+        - Events
+      summary: Delete an event
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Event deleted successfully
+        '404':
+          description: Event not found or unauthorized
+        '401':
+          description: Unauthorized
+  /api/events/organizer/me:
+    get:
+      tags:
+        - Events
+      summary: Get events organized by current user
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: List of user's events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '401':
+          description: Unauthorized
+  /api/tickets/me:
+    get:
+      tags:
+        - Tickets
+      summary: Get current user's tickets
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: List of user's tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        '401':
+          description: Unauthorized
+  /api/tickets/{id}:
+    get:
+      tags:
+        - Tickets
+      summary: Get ticket by ID
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '404':
+          description: Ticket not found
+        '403':
+          description: Forbidden - not ticket owner
+        '401':
+          description: Unauthorized
+  /api/tickets/event/{eventId}:
+    get:
+      tags:
+        - Tickets
+      summary: Get all tickets for an event
+      security:
+        - Bearer: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of event tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        '401':
+          description: Unauthorized
+  /api/tickets/purchase:
+    post:
+      tags:
+        - Tickets
+      summary: Purchase a ticket for an event
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseTicketRequest'
+      responses:
+        '201':
+          description: Ticket purchased successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Bad request - event not found or no tickets available
+        '401':
+          description: Unauthorized
+  /api/tickets/{id}/cancel:
+    post:
+      tags:
+        - Tickets
+      summary: Cancel a ticket
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket cancelled successfully
+        '400':
+          description: Bad request - unable to cancel ticket
+        '401':
+          description: Unauthorized
+  /swagger:
+    get:
+      tags:
+        - Documentation
+      summary: Get OpenAPI specification
+      responses:
+        '200':
+          description: OpenAPI YAML specification
+          content:
+            application/yaml:
+              schema:
+                type: string
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        password:
+          type: string
+          minLength: 6
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+    CreateEventRequest:
+      type: object
+      required:
+        - name
+        - startDate
+        - endDate
+        - totalTickets
+        - price
+      properties:
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 2000
+        location:
+          type: string
+          maxLength: 300
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        totalTickets:
+          type: integer
+          minimum: 1
+          maximum: 100000
+        price:
+          type: number
+          format: decimal
+          minimum: 0
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        totalTickets:
+          type: integer
+        availableTickets:
+          type: integer
+        price:
+          type: number
+          format: decimal
+        organizerId:
+          type: integer
+        organizer:
+          $ref: '#/components/schemas/User'
+        createdAt:
+          type: string
+          format: date-time
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    PurchaseTicketRequest:
+      type: object
+      required:
+        - eventId
+      properties:
+        eventId:
+          type: integer
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticketNumber:
+          type: string
+        eventId:
+          type: integer
+        event:
+          $ref: '#/components/schemas/Event'
+        userId:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+        purchaseDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: 'JWT Authorization header using the Bearer scheme. Enter ''Bearer'' [space] and then your token.'

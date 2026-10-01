@@ -1,0 +1,127 @@
+@page "/"
+
+<PageTitle>FreelanceHub</PageTitle>
+
+<h1>Welcome to FreelanceHub</h1>
+
+<p>A GraphQL-powered freelance marketplace.</p>
+
+<h2>GraphQL Endpoint</h2>
+<p>Access the GraphQL endpoint at: <code>/graphql</code></p>
+
+<h3>Available Operations:</h3>
+
+<h4>Mutations:</h4>
+<ul>
+    <li><strong>register</strong> - Create a new user account</li>
+    <li><strong>login</strong> - Authenticate and receive a JWT token</li>
+    <li><strong>createProject</strong> - Post a new project (requires authentication)</li>
+    <li><strong>createBid</strong> - Submit a bid on a project (requires authentication)</li>
+    <li><strong>updateProjectStatus</strong> - Update project status (requires authentication)</li>
+</ul>
+
+<h4>Queries:</h4>
+<ul>
+    <li><strong>projects</strong> - List all projects with filtering and sorting</li>
+    <li><strong>project(id)</strong> - Get a specific project with bids</li>
+    <li><strong>users</strong> - List users (requires authentication)</li>
+    <li><strong>bids(projectId)</strong> - Get bids for a project</li>
+</ul>
+
+<h3>Example Mutations:</h3>
+
+<h4>Register:</h4>
+<pre><code>mutation {
+  register(email: "user@example.com", password: "password123", name: "John Doe") {
+    token
+    user {
+      id
+      email
+      name
+    }
+  }
+}</code></pre>
+
+<h4>Login:</h4>
+<pre><code>mutation {
+  login(email: "user@example.com", password: "password123") {
+    token
+    user {
+      id
+      email
+      name
+    }
+  }
+}</code></pre>
+
+<h4>Create Project (with Authorization header):</h4>
+<pre><code>mutation {
+  createProject(
+    title: "Build a Website"
+    description: "Need a modern website built"
+    budget: 5000
+  ) {
+    id
+    title
+    budget
+    status
+  }
+}</code></pre>
+
+<h4>Create Bid (with Authorization header):</h4>
+<pre><code>mutation {
+  createBid(
+    projectId: 1
+    amount: 4500
+    proposal: "I can build this website for you"
+  ) {
+    id
+    amount
+    proposal
+  }
+}</code></pre>
+
+<h3>Example Queries:</h3>
+
+<h4>Get All Projects:</h4>
+<pre><code>query {
+  projects {
+    id
+    title
+    description
+    budget
+    status
+    owner {
+      name
+      email
+    }
+    bids {
+      amount
+      bidder {
+        name
+      }
+    }
+  }
+}</code></pre>
+
+<h4>Get Specific Project:</h4>
+<pre><code>query {
+  project(id: 1) {
+    id
+    title
+    description
+    budget
+    status
+    owner {
+      name
+    }
+    bids {
+      amount
+      proposal
+      bidder {
+        name
+        email
+      }
+    }
+  }
+}</code></pre>

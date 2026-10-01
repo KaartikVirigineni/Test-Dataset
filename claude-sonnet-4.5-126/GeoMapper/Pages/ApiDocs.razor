@@ -1,0 +1,93 @@
+@page "/api-docs"
+
+<PageTitle>API Documentation - GeoMapper</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>API Documentation</h1>
+            <p>GeoMapper provides a RESTful API for managing map locations.</p>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <h3>Authentication</h3>
+            <p>Most endpoints require JWT authentication. Include the token in the Authorization header:</p>
+            <pre><code>Authorization: Bearer YOUR_JWT_TOKEN</code></pre>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <h3>Interactive Documentation</h3>
+            <p>
+                <a href="/swagger-ui" class="btn btn-primary" target="_blank">Open Swagger UI</a>
+                <a href="/swagger" class="btn btn-secondary ms-2" target="_blank">Download OpenAPI Spec</a>
+            </p>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <h3>Endpoints</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth Required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>POST</td>
+                        <td>/api/auth/register</td>
+                        <td>Register a new user</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>POST</td>
+                        <td>/api/auth/login</td>
+                        <td>Login and get JWT token</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/api/locations</td>
+                        <td>Get all locations</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/api/locations/my</td>
+                        <td>Get current user's locations</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/api/locations/{'{id}'}</td>
+                        <td>Get location by ID</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>POST</td>
+                        <td>/api/locations</td>
+                        <td>Create a new location</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>PUT</td>
+                        <td>/api/locations/{'{id}'}</td>
+                        <td>Update a location</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>DELETE</td>
+                        <td>/api/locations/{'{id}'}</td>
+                        <td>Delete a location</td>
+                        <td>Yes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

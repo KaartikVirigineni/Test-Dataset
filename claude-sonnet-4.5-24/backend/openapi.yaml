@@ -1,0 +1,297 @@
+openapi: 3.0.0
+info:
+  title: FormFlow Survey Builder API
+  version: 1.0.0
+  description: REST API for survey and form builder application
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    UserRegister:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+    
+    SurveyCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+    
+    QuestionCreate:
+      type: object
+      required:
+        - question_text
+        - question_type
+      properties:
+        question_text:
+          type: string
+        question_type:
+          type: string
+        order:
+          type: integer
+          default: 0
+        required:
+          type: boolean
+          default: false
+    
+    AnswerSubmit:
+      type: object
+      required:
+        - question_id
+        - answer_text
+      properties:
+        question_id:
+          type: integer
+        answer_text:
+          type: string
+    
+    ResponseSubmit:
+      type: object
+      required:
+        - survey_id
+        - answers
+      properties:
+        survey_id:
+          type: integer
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnswerSubmit'
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+  
+  /api/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: Email already registered
+  
+  /api/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Invalid credentials
+  
+  /api/surveys:
+    get:
+      summary: Get all active surveys
+      responses:
+        '200':
+          description: List of surveys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    description:
+                      type: string
+    
+    post:
+      summary: Create a new survey
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurveyCreate'
+      responses:
+        '200':
+          description: Survey created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+        '401':
+          description: Unauthorized
+  
+  /api/surveys/{survey_id}:
+    get:
+      summary: Get survey details
+      parameters:
+        - name: survey_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Survey details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  questions:
+                    type: array
+                    items:
+                      type: object
+        '404':
+          description: Survey not found
+  
+  /api/surveys/{survey_id}/questions:
+    post:
+      summary: Add question to survey
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: survey_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionCreate'
+      responses:
+        '200':
+          description: Question added
+        '401':
+          description: Unauthorized
+        '404':
+          description: Survey not found
+  
+  /api/responses:
+    post:
+      summary: Submit survey response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResponseSubmit'
+      responses:
+        '200':
+          description: Response submitted
+        '404':
+          description: Survey not found
+  
+  /api/surveys/{survey_id}/responses:
+    get:
+      summary: Get survey responses
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: survey_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of responses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Unauthorized
+        '404':
+          description: Survey not found

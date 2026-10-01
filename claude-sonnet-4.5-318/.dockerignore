@@ -1,0 +1,7 @@
+node_modules
+.meteor/local
+data
+*.log
+.git
+.gitignore
+README.md

@@ -1,0 +1,10 @@
+.git
+.gitignore
+README.md
+runtime/*
+!runtime/.gitkeep
+database/*.db
+vendor
+.env
+.DS_Store
+*.log

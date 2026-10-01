@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Data Source=/data/experiments.db
+      - JwtSettings__Secret=ThisIsAVerySecureSecretKeyForJWTTokenGeneration123456
+      - JwtSettings__Issuer=ExperimentHub
+      - JwtSettings__Audience=ExperimentHubUsers
+      - JwtSettings__ExpiryMinutes=60
+    volumes:
+      - app-data:/data
+    command: ["dotnet", "ExperimentHub.dll"]
+
+volumes:
+  app-data:

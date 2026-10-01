@@ -1,0 +1,8 @@
+config.php
+routes.php
+schedule-*
+compiled.php
+services.json
+*.key
+.env.backup
+.phpunit.result.cache

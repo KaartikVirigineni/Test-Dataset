@@ -1,0 +1,42 @@
+@page "/"
+
+<PageTitle>LeadScore Pro - Dashboard</PageTitle>
+
+<div class="dashboard">
+    <h1>LeadScore Pro Dashboard</h1>
+    
+    <div class="info-card">
+        <h2>Welcome to LeadScore Pro</h2>
+        <p>A comprehensive lead capture and scoring system with role-based access control.</p>
+        
+        <h3>Features:</h3>
+        <ul>
+            <li>Lead capture and management</li>
+            <li>Activity tracking and scoring</li>
+            <li>Role-based access control (Admin, Manager, User)</li>
+            <li>RESTful API with JWT authentication</li>
+            <li>SQLite database</li>
+        </ul>
+
+        <h3>API Documentation:</h3>
+        <p>Visit <a href="/swagger-ui" target="_blank">Swagger UI</a> to explore the REST API.</p>
+        
+        <h3>Default Users:</h3>
+        <ul>
+            <li><strong>Admin:</strong> admin@leadscore.com / Admin123!</li>
+            <li><strong>Manager:</strong> manager@leadscore.com / Manager123!</li>
+            <li><strong>User:</strong> user@leadscore.com / User123!</li>
+        </ul>
+
+        <h3>API Endpoints:</h3>
+        <ul>
+            <li><code>POST /api/auth/login</code> - Authenticate and receive JWT token</li>
+            <li><code>GET /api/leads</code> - Get all leads (requires authentication)</li>
+            <li><code>POST /api/leads</code> - Create new lead (requires User role)</li>
+            <li><code>PUT /api/leads/{'{id}'}</code> - Update lead (requires Manager role)</li>
+            <li><code>DELETE /api/leads/{'{id}'}</code> - Delete lead (requires Admin role)</li>
+            <li><code>POST /api/leads/{'{id}'}/activities</code> - Add activity to lead</li>
+            <li><code>GET /api/leads/{'{id}'}/activities</code> - Get lead activities</li>
+        </ul>
+    </div>
+</div>

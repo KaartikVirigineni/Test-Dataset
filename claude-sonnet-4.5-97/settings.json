@@ -1,0 +1,4 @@
+{
+  "jwtSecret": "your-secret-key-change-in-production",
+  "port": 3000
+}

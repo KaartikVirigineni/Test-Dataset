@@ -1,0 +1,293 @@
+openapi: 3.0.1
+info:
+  title: RealtimeChat API
+  description: REST API for real-time chat and messaging application
+  version: v1
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Username already exists
+  /api/rooms:
+    get:
+      tags:
+        - Rooms
+      summary: Get all chat rooms
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: List of rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomDto'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Rooms
+      summary: Create a new room
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoomRequest'
+      responses:
+        '201':
+          description: Room created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDto'
+        '400':
+          description: Failed to create room
+        '401':
+          description: Unauthorized
+  /api/rooms/{id}:
+    get:
+      tags:
+        - Rooms
+      summary: Get room details
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Room details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDto'
+        '404':
+          description: Room not found
+        '401':
+          description: Unauthorized
+  /api/rooms/{id}/join:
+    post:
+      tags:
+        - Rooms
+      summary: Join a room
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully joined room
+        '400':
+          description: Failed to join room
+        '401':
+          description: Unauthorized
+  /api/rooms/{id}/leave:
+    post:
+      tags:
+        - Rooms
+      summary: Leave a room
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully left room
+        '400':
+          description: Failed to leave room
+        '401':
+          description: Unauthorized
+  /api/rooms/{roomId}/messages:
+    get:
+      tags:
+        - Messages
+      summary: Get messages in a room
+      security:
+        - Bearer: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageDto'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Messages
+      summary: Send a message
+      security:
+        - Bearer: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '201':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+        '400':
+          description: Failed to send message
+        '401':
+          description: Unauthorized
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          default: User
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+    CreateRoomRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    RoomDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        memberCount:
+          type: integer
+    SendMessageRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+    MessageDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        username:
+          type: string
+        sentAt:
+          type: string
+          format: date-time
+        isEdited:
+          type: boolean
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"'

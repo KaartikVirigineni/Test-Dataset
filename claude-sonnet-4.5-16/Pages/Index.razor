@@ -1,0 +1,83 @@
+@page "/"
+
+<PageTitle>WarehouseHub - Home</PageTitle>
+
+<div class="container">
+    <h1>Welcome to WarehouseHub</h1>
+    
+    <div class="info-section">
+        <h2>Production-Ready Warehouse Management System</h2>
+        <p>
+            WarehouseHub is a comprehensive warehouse management solution built with Blazor Server and GraphQL.
+        </p>
+        
+        <h3>Features</h3>
+        <ul>
+            <li>Product Management</li>
+            <li>Warehouse Management</li>
+            <li>Inventory Tracking</li>
+            <li>Low Stock Alerts</li>
+            <li>Secure Authentication (JWT)</li>
+            <li>GraphQL API</li>
+            <li>REST API</li>
+        </ul>
+
+        <h3>API Endpoints</h3>
+        <div class="endpoint-section">
+            <h4>GraphQL Endpoint</h4>
+            <p><code>POST /graphql</code></p>
+            <p>Interactive GraphQL IDE available at: <a href="/graphql" target="_blank">/graphql</a></p>
+            
+            <h4>REST Endpoints</h4>
+            <ul>
+                <li><code>POST /api/auth/login</code> - User login</li>
+                <li><code>POST /api/auth/register</code> - User registration</li>
+                <li><code>GET /api/products</code> - List all products</li>
+                <li><code>GET /api/warehouses</code> - List all warehouses</li>
+                <li><code>GET /api/inventory</code> - List all inventory</li>
+                <li><code>GET /api/inventory/low-stock</code> - Get low stock items</li>
+            </ul>
+        </div>
+
+        <h3>Default Credentials</h3>
+        <div class="credentials">
+            <p><strong>Email:</strong> admin@warehouse.com</p>
+            <p><strong>Password:</strong> Admin123!</p>
+        </div>
+
+        <h3>Sample GraphQL Queries</h3>
+        <div class="code-section">
+            <h4>Login Mutation:</h4>
+            <pre><code>mutation {
+  login(email: "admin@warehouse.com", password: "Admin123!") {
+    token
+  }
+}</code></pre>
+
+            <h4>Get Products Query:</h4>
+            <pre><code>query {
+  products {
+    id
+    name
+    sku
+    price
+    description
+  }
+}</code></pre>
+
+            <h4>Create Product Mutation:</h4>
+            <pre><code>mutation {
+  createProduct(
+    name: "Sample Product"
+    sku: "SKU-001"
+    price: 99.99
+    description: "A sample product"
+  ) {
+    id
+    name
+    sku
+  }
+}</code></pre>
+        </div>
+    </div>
+</div>
